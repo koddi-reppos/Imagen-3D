@@ -7,9 +7,9 @@ aiohttp==3.9.3
 opencv-python-headless==4.9.0.80
 pillow==10.2.0
 matplotlib==3.8.3
-torch==2.1.2
-torchvision==0.16.2
+torch==2.1.1  # Cambiado a versión compatible con xformers
+torchvision==0.16.1  # Versión compatible con torch 2.1.1
 transformers==4.36.2
 diffusers==0.26.3
 accelerate==0.26.1
-xformers==0.0.23
+xformers==0.0.23  # Mantenido pero ahora compatible
