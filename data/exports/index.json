@@ -1,0 +1,12 @@
+{
+  "cubo_10.0mm_20250917_053111.stl": {
+    "filename": "cubo_10.0mm_20250917_053111.stl",
+    "model_type": "cube",
+    "dimensions": {
+      "size": 10.0
+    },
+    "triangles": 12,
+    "size_bytes": 2493,
+    "created_at": "2025-09-17T05:31:11.716506"
+  }
+}
