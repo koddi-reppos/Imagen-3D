@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador 3D - Modelos STL para Impresión</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔧 Generador 3D</h1>
+            <p>Crea modelos STL listos para impresión 3D</p>
+        </header>
+
+        <main>
+            <div class="content-grid">
+                <!-- Generator Section -->
+                <section class="generator-section">
+                    <h2>📐 Generador de Modelos</h2>
+                    
+                    <div class="model-selector">
+                        <label>Tipo de Modelo:</label>
+                        <select id="modelType" onchange="updateParameterForm()">
+                            <option value="ai_model">🤖 Modelo AI Profesional</option>
+                            <option value="cube">Cubo Básico</option>
+                            <option value="cylinder">Cilindro</option>
+                            <option value="sphere">Esfera</option>
+                            <option value="custom_box">Caja Personalizada</option>
+                        </select>
+                    </div>
+
+                    <!-- Parameter Forms -->
+                    <div id="aiModelForm" class="parameter-form active">
+                        <h3>🎯 Generación AI Profesional</h3>
+                        
+                        <div class="ai-options">
+                            <label>
+                                <input type="radio" name="aiMode" value="template" checked onchange="toggleAIMode()">
+                                Plantillas Profesionales
+                            </label>
+                            <label>
+                                <input type="radio" name="aiMode" value="custom" onchange="toggleAIMode()">
+                                Descripción Personalizada
+                            </label>
+                        </div>
+
+                        <div id="templateMode" class="ai-mode">
+                            <div class="input-group">
+                                <label for="aiTemplate">Plantilla:</label>
+                                <select id="aiTemplate">
+                                    <option value="castillo_medieval">🏰 Castillo Medieval</option>
+                                    <option value="muneco_ninja">🥷 Muñeco Ninja</option>
+                                    <option value="dragon_fantastico">🐉 Dragón Fantástico</option>
+                                    <option value="casa_moderna">🏠 Casa Moderna</option>
+                                    <option value="robot_futurista">🤖 Robot Futurista</option>
+                                    <option value="princesa_cartoon">👸 Princesa Cartoon</option>
+                                    <option value="nave_espacial">🚀 Nave Espacial</option>
+                                    <option value="torre_mago">🧙 Torre del Mago</option>
+                                    <option value="dinosaurio_trex">🦕 T-Rex</option>
+                                    <option value="coche_deportivo">🏎️ Coche Deportivo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div id="customMode" class="ai-mode" style="display:none;">
+                            <div class="input-group">
+                                <label for="customPrompt">Describe tu modelo:</label>
+                                <textarea id="customPrompt" rows="3" placeholder="Ej: Un castillo gótico con torres altas y puente levadizo, estilo medieval realista"></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label for="aiStyle">Estilo:</label>
+                                <select id="aiStyle">
+                                    <option value="realistic">Realista</option>
+                                    <option value="cartoon">Cartoon</option>
+                                    <option value="fantasy">Fantasía</option>
+                                    <option value="sci-fi">Ciencia Ficción</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="ai-notice">
+                            ⚡ La generación AI puede tomar 2-5 minutos. Los modelos son de calidad profesional listos para impresión.
+                        </div>
+                    </div>
+
+                    <div id="cubeForm" class="parameter-form">
+                        <h3>Parámetros del Cubo</h3>
+                        <div class="input-group">
+                            <label for="cubeSize">Tamaño (mm):</label>
+                            <input type="number" id="cubeSize" min="0.1" max="500" step="0.1" value="10">
+                        </div>
+                    </div>
+
+                    <div id="cylinderForm" class="parameter-form">
+                        <h3>Parámetros del Cilindro</h3>
+                        <div class="input-group">
+                            <label for="cylinderRadius">Radio (mm):</label>
+                            <input type="number" id="cylinderRadius" min="0.1" max="250" step="0.1" value="5">
+                        </div>
+                        <div class="input-group">
+                            <label for="cylinderHeight">Altura (mm):</label>
+                            <input type="number" id="cylinderHeight" min="0.1" max="500" step="0.1" value="10">
+                        </div>
+                        <div class="input-group">
+                            <label for="cylinderSegments">Segmentos:</label>
+                            <input type="number" id="cylinderSegments" min="6" max="256" step="1" value="20">
+                        </div>
+                    </div>
+
+                    <div id="sphereForm" class="parameter-form">
+                        <h3>Parámetros de la Esfera</h3>
+                        <div class="input-group">
+                            <label for="sphereRadius">Radio (mm):</label>
+                            <input type="number" id="sphereRadius" min="0.1" max="250" step="0.1" value="5">
+                        </div>
+                        <div class="input-group">
+                            <label for="sphereSegments">Segmentos:</label>
+                            <input type="number" id="sphereSegments" min="6" max="128" step="1" value="20">
+                        </div>
+                    </div>
+
+                    <div id="customBoxForm" class="parameter-form">
+                        <h3>Parámetros de la Caja</h3>
+                        <div class="input-group">
+                            <label for="boxLength">Largo (mm):</label>
+                            <input type="number" id="boxLength" min="1" max="500" step="0.1" value="20">
+                        </div>
+                        <div class="input-group">
+                            <label for="boxWidth">Ancho (mm):</label>
+                            <input type="number" id="boxWidth" min="1" max="500" step="0.1" value="15">
+                        </div>
+                        <div class="input-group">
+                            <label for="boxHeight">Alto (mm):</label>
+                            <input type="number" id="boxHeight" min="1" max="500" step="0.1" value="10">
+                        </div>
+                        <div class="input-group">
+                            <label for="boxThickness">Grosor de Pared (mm):</label>
+                            <input type="number" id="boxThickness" min="0.1" max="50" step="0.1" value="2">
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="generateBtn" onclick="generateModel()" class="btn-primary">
+                            🚀 Generar Modelo
+                        </button>
+                        <button id="previewBtn" onclick="previewModel()" class="btn-secondary">
+                            👁️ Vista Previa
+                        </button>
+                    </div>
+
+                    <div id="statusMessage" class="status-message"></div>
+                </section>
+
+                <!-- Preview Section -->
+                <section class="preview-section">
+                    <h2>🎯 Vista Previa 3D</h2>
+                    <div id="preview3d" class="preview-container">
+                        <div class="preview-placeholder">
+                            <p>Haz clic en "Vista Previa" para ver el modelo</p>
+                        </div>
+                    </div>
+                    <div class="preview-info">
+                        <div id="modelInfo" class="model-info"></div>
+                    </div>
+                </section>
+
+                <!-- Files Section -->
+                <section class="files-section">
+                    <h2>📁 Mis Archivos</h2>
+                    <div class="files-header">
+                        <button onclick="refreshFileList()" class="btn-secondary">🔄 Actualizar</button>
+                        <button onclick="downloadSelectedAsZip()" class="btn-accent" id="zipBtn" disabled>
+                            📦 Descargar ZIP
+                        </button>
+                    </div>
+                    <div id="filesList" class="files-list">
+                        <p>Cargando archivos...</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <p>Generador 3D - Crea modelos STL de calidad para impresión 3D</p>
+        </footer>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
