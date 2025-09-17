@@ -13,4 +13,4 @@ transformers==4.36.2
 diffusers==0.26.3
 accelerate==0.26.1
 xformers==0.0.23  # Mantenido pero ahora compatible
-python-magic-bin
+python-magic
