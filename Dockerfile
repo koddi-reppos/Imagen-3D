@@ -9,12 +9,13 @@ RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     curl \
+    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies (global, no --user)
+# Install Python dependencies globally
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Production stage
@@ -45,5 +46,5 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 # Set environment variables
 ENV PYTHONPATH=/app
 
-# Start application (module form → no problemas con PATH)
+# Start application using python -m uvicorn
 CMD ["python", "-m", "uvicorn", "src.backend.app.main:app", "--host", "0.0.0.0", "--port", "5000"]
