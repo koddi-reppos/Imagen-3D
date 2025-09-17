@@ -4,7 +4,7 @@ FROM python:3.11-slim as builder
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies including build essentials for numpy
+# Install system dependencies including build essentials
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -13,6 +13,8 @@ RUN apt-get update && apt-get install -y \
     libopenblas-dev \
     gfortran \
     liblapack-dev \
+    libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -24,14 +26,17 @@ ENV PATH="/app/venv/bin:$PATH"
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir wheel setuptools && \
     pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir numpy
+    pip install --no-cache-dir numpy aiohttp opencv-python-headless pillow matplotlib torch torchvision transformers diffusers
 
 # Production stage
 FROM python:3.11-slim
 
 # Install system dependencies including curl for healthcheck
-RUN apt-get update && apt-get install -y curl && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    curl \
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
@@ -42,6 +47,7 @@ COPY --from=builder /app/venv /app/venv
 # Copy application code
 COPY src/ src/
 COPY data/ data/
+COPY templates/ templates/
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash appuser && \
@@ -51,7 +57,7 @@ USER appuser
 # Expose port
 EXPOSE 5000
 
-# Health check
+# Health check (solo si tu aplicación tiene endpoint /health)
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:5000/health || exit 1
 
